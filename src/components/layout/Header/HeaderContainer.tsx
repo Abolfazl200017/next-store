@@ -1,7 +1,7 @@
 import { siteConfig } from "@/constants";
 import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
-import { Link } from "react-transition-progress/next";;
+import { Link } from "react-transition-progress/next";
 import LoginIcon from "@mui/icons-material/Login";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import LogoutButton from "./LogoutButton";
@@ -56,11 +56,11 @@ function LoginOrBasket({ user }: { user: string | null }) {
             <LogoutButton />
             {user}
           </Box>
-          <Button sx={{ color: 'black' }}>
-            <Link href="/basket">
+          <Link href="/basket">
+            <Button sx={{ color: "black" }}>
               <ShoppingBasketIcon sx={{ color: "#454545", fontSize: "2rem" }} />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </Box>
       ) : (
         <Link href="/register">
@@ -79,8 +79,8 @@ export const HeaderContainer: React.FC<{ user: string | null }> = ({
 }) => {
   return (
     <header>
-      <Container 
-        maxWidth='lg'
+      <Container
+        maxWidth="lg"
         sx={{
           // width: "100%",
           display: "flex",

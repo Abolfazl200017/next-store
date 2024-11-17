@@ -14,7 +14,7 @@ import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import ProductActionsContainer from "@/components/common/ProductActions.tsx";
 import { Link } from "react-transition-progress/next";
 import { Product } from "@/services/api/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function BasketProduct({ product }: { product: Product&{quantity: number} }) {
   const theme = useTheme();
@@ -102,10 +102,6 @@ export default function BasketPage() {
     );
     return Math.round(total * 100) / 100;
   };
-
-  useEffect(() => {
-    console.log(loading)
-  }, [loading])
 
   if (loading)
     return <Box sx={{ width: 1, height: '85vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

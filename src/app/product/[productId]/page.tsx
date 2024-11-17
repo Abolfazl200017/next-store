@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import { productsService } from "@/services/api/productsService";
 import { Box, Container, Rating, Typography } from "@mui/material";
 import { cookies } from "next/headers";
+import { Link } from "react-transition-progress/next";
 
 interface ProductPageProps {
   params: Promise<{ productId: string }>;
@@ -23,9 +24,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <Layout>
       <Box sx={{ py: 5, width: 1 }} className="bg-secondary">
         <Container maxWidth="lg">
-          <Typography sx={{}}>
-            {`خانه  > ‌ محصولات  >  ${product.title}`}
-          </Typography>
+          <Box sx={{ maxWidth: 1, overflowX: 'hidden', display: 'flex', gap: 2 }}>
+            <Link href="/">
+              {`خانه`}
+            </Link>
+            <Box component='span'>
+              {'>'}
+            </Box>
+            <Link href="/product">
+              {`محصولات`}
+            </Link>
+            <Box component='span'>
+              {'>'}
+            </Box>
+            <Link href={`/product/${product.id}`}>
+              {product.title}
+            </Link>
+          </Box>
         </Container>
       </Box>
       <Container maxWidth="lg" sx={{ my: 5 }}>

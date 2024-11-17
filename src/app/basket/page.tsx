@@ -2,6 +2,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Skeleton,
   Typography,
@@ -13,7 +14,7 @@ import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import ProductActionsContainer from "@/components/common/ProductActions.tsx";
 import { Link } from "react-transition-progress/next";
 import { Product } from "@/services/api/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function BasketProduct({ product }: { product: Product&{quantity: number} }) {
   const theme = useTheme();
@@ -93,7 +94,7 @@ function BasketProduct({ product }: { product: Product&{quantity: number} }) {
 }
 
 export default function BasketPage() {
-  const { products } = useBasketStore();
+  const { products, loading } = useBasketStore();
   const subtotal = (): number => {
     const total = products.reduce(
       (total, product) => total + product.price * product.quantity,
@@ -102,6 +103,15 @@ export default function BasketPage() {
     return Math.round(total * 100) / 100;
   };
 
+  useEffect(() => {
+    console.log(loading)
+  }, [loading])
+
+  if (loading)
+    return <Box sx={{ width: 1, height: '85vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <CircularProgress />
+    </Box>
+  
   return (
     <>
       {products && products.length ? (

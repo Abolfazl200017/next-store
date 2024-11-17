@@ -9,24 +9,41 @@ export type ProductWithQuantity = Product & {
 
 type BasketState = {
   products: ProductWithQuantity[];
+  loading: boolean;
   addProduct: (product: Product, quantity: number) => void;
   updateProductQuantity: (id: string, quantity: number) => void;
-  removeProduct: (id: string|number) => void;
+  removeProduct: (id: string | number) => void;
   reset: () => void;
+  initializeStore: () => void; // Method to set up the store
 };
 
 // Create initial state with mock data
-const initialState: Pick<BasketState, 'products'> = {
-  products: process.env.NODE_ENV === 'development' ? mockProducts : []
+const initialState: Pick<BasketState, 'products' | 'loading'> = {
+  products: [],
+  loading: true,
 };
 
 const useBasketStore = create<BasketState>()(
   devtools(
     persist(
       (set) => ({
-        // Initialize with mock data in development
+        // Initial state
         products: initialState.products,
+        loading: initialState.loading,
 
+        // Method to initialize the store
+        initializeStore: () => {
+          set({ loading: true }); // Set loading to true initially
+          setTimeout(() => {
+            // Simulating an API or data fetch
+            set({
+              products: process.env.NODE_ENV === 'development' ? mockProducts : [],
+              loading: false, // Set loading to false after initialization
+            });
+          }, 1000); // Simulated delay
+        },
+
+        // Add a product
         addProduct: (product, quantity) =>
           set(
             (state) => {
@@ -46,6 +63,7 @@ const useBasketStore = create<BasketState>()(
             'basket/addProduct'
           ),
 
+        // Update product quantity
         updateProductQuantity: (id, quantity) =>
           set(
             (state) => ({
@@ -57,6 +75,7 @@ const useBasketStore = create<BasketState>()(
             'basket/updateQuantity'
           ),
 
+        // Remove a product
         removeProduct: (id) =>
           set(
             (state) => ({
@@ -68,9 +87,10 @@ const useBasketStore = create<BasketState>()(
             'basket/removeProduct'
           ),
 
+        // Reset the store
         reset: () =>
           set(
-            { products: initialState.products },
+            { products: initialState.products, loading: false },
             false,
             'basket/reset'
           ),
@@ -87,6 +107,8 @@ export default useBasketStore;
 export const createTestBasketStore = (customInitialState?: Partial<BasketState>) => {
   return create<BasketState>()((set) => ({
     products: customInitialState?.products || mockProducts,
+    loading: false, // Set loading to false for test stores by default
+    initializeStore: () => {},
     addProduct: (product, quantity) =>
       set((state) => {
         const existingProduct = state.products.find((p) => p.id === product.id);

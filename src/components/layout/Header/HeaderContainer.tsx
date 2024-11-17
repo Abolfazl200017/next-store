@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-transition-progress/next";;
 import LoginIcon from "@mui/icons-material/Login";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
+import LogoutButton from "./LogoutButton";
 
 function LogoName() {
   return (
@@ -52,9 +53,7 @@ function LoginOrBasket({ user }: { user: string | null }) {
       {isLoggedIn ? (
         <Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", mx: 1 }}>
-            <Button sx={{ color: 'black', backgroundColor: 'transparent' }}>
-              خروج
-            </Button>
+            <LogoutButton />
             {user}
           </Box>
           <Button sx={{ color: 'black' }}>

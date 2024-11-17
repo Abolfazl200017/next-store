@@ -7,14 +7,14 @@ import Categories from "@/components/Home/Categories";
 import ProductCard from "@/components/Home/ProductCard";
 import Layout from "@/components/layout";
 import { CannotGetData } from "@/components/common/errors/CannotGetData";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 import BannerCarousel from "@/components/Home/Banner";
 
 export type JWT = {
   iat: string;
   user: string;
   sub: number;
-}
+};
 export default async function Home({
   searchParams,
 }: {
@@ -26,8 +26,8 @@ export default async function Home({
   const { products }: { products: Product[] | null } =
     await productsService.getAllProducts();
 
-  const cookieStore = await cookies()
-  const token = cookieStore.get('authToken')
+  const cookieStore = await cookies();
+  const token = cookieStore.get("authToken");
 
   return (
     <Layout>
@@ -55,14 +55,12 @@ export default async function Home({
               products
                 .slice((page - 1) * perPage, page * perPage)
                 .map((product: Product) => (
-                  <>
-                    <Grid
-                      key={product.id}
-                      size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                    >
-                      <ProductCard product={product} isShowAction={Boolean(token)} />
-                    </Grid>
-                  </>
+                  <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                    <ProductCard
+                      product={product}
+                      isShowAction={Boolean(token)}
+                    />
+                  </Grid>
                 ))
             ) : (
               <CannotGetData />

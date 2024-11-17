@@ -1,5 +1,5 @@
 import { siteConfig } from "@/constants";
-import { Box, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-transition-progress/next";;
 import LoginIcon from "@mui/icons-material/Login";
@@ -76,9 +76,10 @@ export const HeaderContainer: React.FC<{ user: string | null }> = ({
 }) => {
   return (
     <header>
-      <Box
+      <Container 
+        maxWidth='lg'
         sx={{
-          width: "100vw",
+          // width: "100%",
           display: "flex",
           justifyContent: "center",
         }}
@@ -98,7 +99,7 @@ export const HeaderContainer: React.FC<{ user: string | null }> = ({
           <LinkList />
           <LoginOrBasket user={user} />
         </Box>
-      </Box>
+      </Container>
     </header>
   );
 };

@@ -16,13 +16,17 @@ import { Link } from "react-transition-progress/next";
 import { Product } from "@/services/api/types";
 import { useState } from "react";
 
-function BasketProduct({ product }: { product: Product&{quantity: number} }) {
+function BasketProduct({
+  product,
+}: {
+  product: Product & { quantity: number };
+}) {
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
-  const [ isLoaded, setIsLoaded ] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const handleIsLoaded = () => {
     setIsLoaded(true);
-  }
+  };
 
   return (
     <Box
@@ -51,16 +55,21 @@ function BasketProduct({ product }: { product: Product&{quantity: number} }) {
         <Box
           component="img"
           src={product.image}
-          sx={{ width: 1, height: 1, objectFit: "cover", display: isLoaded ? 'block': 'none' }}
+          sx={{
+            width: 1,
+            height: 1,
+            objectFit: "cover",
+            display: isLoaded ? "block" : "none",
+          }}
           onLoad={handleIsLoaded}
         />
-        { isLoaded ? (null) : (
+        {isLoaded ? null : (
           <Skeleton
-              variant="rectangular"
-              width="100%"
-              height="100%"
-              animation="wave"
-            />
+            variant="rectangular"
+            width="100%"
+            height="100%"
+            animation="wave"
+          />
         )}
       </Box>
       <Box
@@ -69,15 +78,17 @@ function BasketProduct({ product }: { product: Product&{quantity: number} }) {
           textAlign: { xs: "center", sm: "start" },
         }}
       >
-        <Typography
-          sx={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {product.title}
-        </Typography>
+        <Link href={`/product/${product.id}`}>
+          <Typography
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {product.title}
+          </Typography>
+        </Link>
         <Typography>
           {product.quantity}
           <Typography component="span" sx={{ mx: 1 }}>
@@ -104,10 +115,20 @@ export default function BasketPage() {
   };
 
   if (loading)
-    return <Box sx={{ width: 1, height: '85vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <CircularProgress />
-    </Box>
-  
+    return (
+      <Box
+        sx={{
+          width: 1,
+          height: "85vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+
   return (
     <>
       {products && products.length ? (
@@ -170,7 +191,11 @@ export default function BasketPage() {
             </Box>
             <Box>
               <Link href="/basket/checkout">
-                <Button variant="outlined" size="large" sx={{ borderRadius: 5 }}>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  sx={{ borderRadius: 5 }}
+                >
                   ادامه خرید
                 </Button>
               </Link>

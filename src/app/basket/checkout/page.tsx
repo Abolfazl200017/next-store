@@ -1,15 +1,22 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { Box, Button, Container, TextField, Typography, FormControl, Alert } from "@mui/material";
+import {
+  Button,
+  Container,
+  TextField,
+  Typography,
+  FormControl,
+  Autocomplete,
+} from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import ReactSelect from "react-select";
 import useBasketStore from "@/store/basketStore";
 import { redirect } from "next/navigation";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 
-// Define the types for provinces and cities
+// Define types for provinces and cities
 type Province = { value: string; label: string };
 type City = { value: string; label: string };
 
@@ -17,25 +24,42 @@ type City = { value: string; label: string };
 const validationSchema = Yup.object({
   name: Yup.string().required("نام باید وارد شود"),
   lastname: Yup.string().required("نام خانوادگی باید وارد شود"),
-  mobile: Yup.string().required("شماره همراه باید وارد شود").matches(/^[0-9]{11}$/, "شماره همراه وارد شده صحیح نمی‌باشد"),
-  postcode: Yup.string().required("کد پستی باید وارد شود").matches(/^[0-9]{10}$/, "کد پستی صحیح نمی‌باشد"),
-  address: Yup.string().required("آدرس باید وارد شود"),
-  province: Yup.string().required("استان باید انتخاب شود"),
-  city: Yup.string().required("شهر باید انتخاب شود"),
+  mobile: Yup.string()
+    .required("شماره همراه باید وارد شود")
+    .matches(/^[0-9]{11}$/, "شماره همراه وارد شده صحیح نمی‌باشد"),
+  email: Yup.string().email("ایمیل نامعتبر است").required("ایمیل الزامی است"),
+  postcode: Yup.string()
+    .required("کد پستی باید وارد شود")
+    .matches(/^[0-9]{10}$/, "کد پستی صحیح نمی‌باشد"),
+  address: Yup.string()
+    .required("آدرس مورد نیاز است")
+    .min(10, "آدرس باید حداقل 10 کاراکتر باشد")
+    .max(200, "آدرس نمی‌تواند بیشتر از 200 کاراکتر باشد"),
+  province: Yup.object()
+    .required("استان باید انتخاب شود")
+    .nullable()
+    .notOneOf([null], "استان نمی‌تواند خالی باشد"), // Disallow null value
+  city: Yup.object()
+    .required("شهر باید انتخاب شود")
+    .nullable()
+    .notOneOf([null], "شهر نمی‌تواند خالی باشد"),
 });
 
 const CheckoutPage = () => {
-  const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [selectedProvince, setSelectedProvince] = useState<Province | null>(
+    null
+  );
+  const [cities, setCities] = useState<City[]>([]);
   const { reset } = useBasketStore();
   const { showSnackbar } = useSnackbar();
+  const [hydrated, setHydrated] = useState(false);
 
-  // Example list of provinces and cities
+  // Example provinces and cities
   const provinces: Province[] = [
     { value: "tehran", label: "تهران" },
     { value: "esfahan", label: "اصفهان" },
     { value: "mashhad", label: "مشهد" },
-    // Add more provinces here
+    { value: "mazandaran", label: "مازندران" },
   ];
 
   const citiesByProvince: Record<string, City[]> = {
@@ -51,39 +75,60 @@ const CheckoutPage = () => {
       { value: "mashhad-city", label: "مشهد" },
       { value: "neishabur", label: "نیشابور" },
     ],
+    mazandaran: [
+      { value: "babol", label: "بابل" },
+      { value: "amol", label: "آمل" },
+    ],
   };
 
   // React Hook Form setup
-  const { control, handleSubmit, formState: { errors }, setValue } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    trigger,
+  } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       name: "",
       lastname: "",
       mobile: "",
+      email: "",
       postcode: "",
       address: "",
-      province: "",
-      city: "",
+      province: null,
+      city: null,
     },
   });
 
-  const onSubmit = (data: any) => {
-    reset()
-    showSnackbar('خرید شما با موفقیت ثبت شد', 'success');
-    redirect('/')
-  };
+  // Ensure hydration consistency
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
-  const handleSelectProvince = (selectedOption: any) => {
+  if (!hydrated) return null; // Prevent SSR rendering
+
+  const handleProvinceChange = (selectedOption: Province | null) => {
     setSelectedProvince(selectedOption);
-    setValue("province", selectedOption.value);
-    // Reset city when province changes
-    setSelectedCity(null);
-    setValue("city", "");
+    setValue("province", selectedOption);
+    setCities(
+      selectedOption ? citiesByProvince[selectedOption.value] || [] : []
+    );
+    setValue("city", null); // Reset city when province changes
+    trigger("province")
   };
 
-  const handleSelectCity = (selectedOption: any) => {
-    setSelectedCity(selectedOption);
-    setValue("city", selectedOption.value);
+  const handleCityChange = (selectedOption: City | null) => {
+    setValue("city", selectedOption);
+    trigger("city")
+  };
+
+  const onSubmit = (data: unknown) => {
+    console.log(data);
+    reset();
+    showSnackbar("خرید شما با موفقیت ثبت شد", "success");
+    redirect("/");
   };
 
   return (
@@ -124,13 +169,29 @@ const CheckoutPage = () => {
           )}
         />
 
-        {/* Mobile Input */}
+        {/* Email Input */}
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="ایمیل"
+              fullWidth
+              {...field}
+              error={!!errors.email}
+              helperText={errors.email ? errors.email.message : ""}
+              sx={{ mb: 3 }}
+            />
+          )}
+        />
+
+        {/* Phone Number Input */}
         <Controller
           name="mobile"
           control={control}
           render={({ field }) => (
             <TextField
-              label="شماره همراه"
+              label="شماره تلفن"
               fullWidth
               {...field}
               error={!!errors.mobile}
@@ -139,81 +200,80 @@ const CheckoutPage = () => {
             />
           )}
         />
-
-        {/* Postcode Input */}
-        <Controller
-          name="postcode"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="کدپستی"
-              fullWidth
-              {...field}
-              error={!!errors.postcode}
-              helperText={errors.postcode ? errors.postcode.message : ""}
-              sx={{ mb: 3 }}
-            />
-          )}
-        />
-
-        {/* Address Input */}
-        <Controller
-          name="address"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              label="آدرس"
-              fullWidth
-              {...field}
-              error={!!errors.address}
-              helperText={errors.address ? errors.address.message : ""}
-              sx={{ mb: 3 }}
-            />
-          )}
-        />
-
-        {/* Province Select */}
         <Controller
           name="province"
           control={control}
           render={({ field }) => (
             <FormControl fullWidth sx={{ mb: 3 }}>
-              <ReactSelect
+              <Autocomplete
                 {...field}
-                value={selectedProvince}
-                onChange={handleSelectProvince}
+                value={selectedProvince} // Correct type: Province | null
+                onChange={(_, value: Province | null) =>
+                  handleProvinceChange(value)
+                }
                 options={provinces}
-                getOptionLabel={(e: any) => e.label}
-                getOptionValue={(e: any) => e.value}
-                placeholder="انتخاب استان"
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value?.value
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="استان"
+                    error={!!errors.province}
+                    helperText={errors.province ? errors.province.message : ""}
+                  />
+                )}
               />
-              {errors.province && <Typography color="error">{errors.province.message}</Typography>}
             </FormControl>
           )}
         />
 
-        {/* City Select */}
         <Controller
           name="city"
           control={control}
           render={({ field }) => (
             <FormControl fullWidth sx={{ mb: 3 }}>
-              <ReactSelect
+              <Autocomplete
                 {...field}
-                value={selectedCity}
-                onChange={handleSelectCity}
-                options={selectedProvince ? citiesByProvince[selectedProvince.value] : []}
-                getOptionLabel={(e: any) => e.label}
-                getOptionValue={(e: any) => e.value}
-                placeholder="انتخاب شهر"
-                isDisabled={!selectedProvince}
+                value={field.value as City | null} // Ensure value matches City | null
+                onChange={(_, value: City | null) => handleCityChange(value)}
+                options={cities}
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value?.value
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="شهر"
+                    error={!!errors.city}
+                    helperText={errors.city ? errors.city.message : ""}
+                  />
+                )}
+                disabled={!selectedProvince}
               />
-              {errors.city && <Typography color="error">{errors.city.message}</Typography>}
             </FormControl>
           )}
         />
 
-        {/* Submit Button */}
+        <Controller
+          name="address"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="آدرس"
+              fullWidth
+              multiline
+              rows={4} // Set the number of rows for the TextArea
+              error={!!errors.address} // Show error if validation fails
+              helperText={errors.address ? errors.address.message : ""} // Show validation message
+              sx={{ mb: 3 }}
+            />
+          )}
+        />
+
         <Button type="submit" variant="contained" color="primary">
           ثبت سفارش
         </Button>

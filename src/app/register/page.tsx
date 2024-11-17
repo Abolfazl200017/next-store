@@ -106,7 +106,7 @@ const Register = () => {
               <Controller
                 name="username"
                 control={control}
-                defaultValue=""
+                defaultValue="mor_2314"
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -123,7 +123,7 @@ const Register = () => {
               <Controller
                 name="password"
                 control={control}
-                defaultValue=""
+                defaultValue="83r5^_"
                 render={({ field }) => (
                   <TextField
                     {...field}

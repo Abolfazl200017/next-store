@@ -1,0 +1,57 @@
+/* :root {
+  --background: #ffffff;
+  --foreground: #171717;
+} */
+@font-face {
+  font-family: "Shabnam";
+  font-weight: normal;
+  src: url("/fonts/Shabnam.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Shabnam";
+  font-weight: bold;
+  src: url("/fonts/Shabnam-Bold.woff") format("woff");
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: '--font-shabnam';
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.text-primary {
+  color: #B88E2F;
+}
+
+.bg-primary {
+  background-color: #B88E2F;
+}
+
+.text-secondary {
+  color: #FFF3E3;
+}
+
+.bg-secondary {
+  background-color: #FFF3E3;
+}
+
+.bg-grey {
+  background-color: #f4f5f7;
+}
+
+.bg-ligtSecondary {
+  background-color: #fcf8f3;
+}

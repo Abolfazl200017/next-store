@@ -25,7 +25,7 @@ function LinkList() {
   const Links = [
     { name: "خانه", href: "/" },
     { name: "محصولات", href: "/product" },
-    { name: "درباره ما", href: "/" },
+    // { name: "درباره ما", href: "/" },
   ];
 
   return (

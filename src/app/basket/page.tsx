@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Container,
+  Skeleton,
   Typography,
   useMediaQuery,
   useTheme,
@@ -10,7 +11,86 @@ import {
 import useBasketStore from "@/store/basketStore";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import ProductActionsContainer from "@/components/common/ProductActions.tsx";
-import { Link } from "react-transition-progress/next";;
+import { Link } from "react-transition-progress/next";
+import { Product } from "@/services/api/types";
+import { useState } from "react";
+
+function BasketProduct({ product }: { product: Product&{quantity: number} }) {
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+  const [ isLoaded, setIsLoaded ] = useState(false);
+  const handleIsLoaded = () => {
+    setIsLoaded(true);
+  }
+
+  return (
+    <Box
+      sx={{
+        width: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        mb: 3,
+        gap: 2,
+        flexDirection: { xs: "column", sm: "row" },
+        flexShrink: 0,
+      }}
+    >
+      <Box
+        sx={{
+          height: "100px",
+          width: "100px",
+          borderRadius: 4,
+          overflow: "hidden",
+          border: 1,
+          flexShrink: 0,
+        }}
+        className="bg-secondary"
+      >
+        <Box
+          component="img"
+          src={product.image}
+          sx={{ width: 1, height: 1, objectFit: "cover", display: isLoaded ? 'block': 'none' }}
+          onLoad={handleIsLoaded}
+        />
+        { isLoaded ? (null) : (
+          <Skeleton
+              variant="rectangular"
+              width="100%"
+              height="100%"
+              animation="wave"
+            />
+        )}
+      </Box>
+      <Box
+        sx={{
+          width: { xs: 1, sm: "calc(100% - 200px)" },
+          textAlign: { xs: "center", sm: "start" },
+        }}
+      >
+        <Typography
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {product.title}
+        </Typography>
+        <Typography>
+          {product.quantity}
+          <Typography component="span" sx={{ mx: 1 }}>
+            X
+          </Typography>
+          <Typography component="span" className="text-primary">
+            {product.price}
+          </Typography>
+        </Typography>
+      </Box>
+      <ProductActionsContainer product={product} isVertical={isSmUp} />
+    </Box>
+  );
+}
 
 export default function BasketPage() {
   const { products } = useBasketStore();
@@ -21,8 +101,6 @@ export default function BasketPage() {
     );
     return Math.round(total * 100) / 100;
   };
-  const theme = useTheme();
-  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <>
@@ -58,66 +136,7 @@ export default function BasketPage() {
             </Box>
             <Box>
               {products.map((product) => (
-                <Box
-                  key={product.id}
-                  sx={{
-                    width: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    mb: 3,
-                    gap: 2,
-                    flexDirection: { xs: "column", sm: "row" },
-                    flexShrink: 0,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: "100px",
-                      width: "100px",
-                      borderRadius: 4,
-                      overflow: "hidden",
-                      border: 1,
-                      flexShrink: 0,
-                    }}
-                    className="bg-secondary"
-                  >
-                    <Box
-                      component="img"
-                      src={product.image}
-                      sx={{ width: 1, height: 1, objectFit: "cover" }}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      width: { xs: 1, sm: "calc(100% - 200px)" },
-                      textAlign: { xs: "center", sm: "start" },
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {product.title}
-                    </Typography>
-                    <Typography>
-                      {product.quantity}
-                      <Typography component="span" sx={{ mx: 1 }}>
-                        X
-                      </Typography>
-                      <Typography component="span" className="text-primary">
-                        {product.price}
-                      </Typography>
-                    </Typography>
-                  </Box>
-                  <ProductActionsContainer
-                    product={product}
-                    isVertical={isSmUp}
-                  />
-                </Box>
+                <BasketProduct key={product.id} product={product} />
               ))}
             </Box>
           </Box>
@@ -153,9 +172,13 @@ export default function BasketPage() {
           </Box>
         </Container>
       ) : (
-        <Container maxWidth='lg' sx={{ mb: 3 }}>
-          <Box component='img' src="/images/empty-basket.svg" sx={{ width: 1 }} />
-          <Typography variant="h5" sx={{ width: 1, textAlign: 'center' }}>
+        <Container maxWidth="lg" sx={{ mb: 3 }}>
+          <Box
+            component="img"
+            src="/images/empty-basket.svg"
+            sx={{ width: 1 }}
+          />
+          <Typography variant="h5" sx={{ width: 1, textAlign: "center" }}>
             سبد خرید شما خالی است
           </Typography>
         </Container>

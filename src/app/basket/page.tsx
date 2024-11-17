@@ -57,7 +57,7 @@ export default function BasketPage() {
               <ShoppingBasketIcon sx={{ color: "#6a6a6a", fontSize: "2rem" }} />
             </Box>
             <Box>
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <Box
                   key={product.id}
                   sx={{

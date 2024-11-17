@@ -1,5 +1,5 @@
 import { siteConfig } from "@/constants";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-transition-progress/next";;
 import LoginIcon from "@mui/icons-material/Login";
@@ -24,7 +24,7 @@ function LogoName() {
 function LinkList() {
   const Links = [
     { name: "خانه", href: "/" },
-    { name: "محصولات", href: "/" },
+    { name: "محصولات", href: "/product" },
     { name: "درباره ما", href: "/" },
   ];
 
@@ -52,18 +52,22 @@ function LoginOrBasket({ user }: { user: string | null }) {
       {isLoggedIn ? (
         <Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", mx: 1 }}>
+            <Button sx={{ color: 'black', backgroundColor: 'transparent' }}>
+              خروج
+            </Button>
             {user}
-            {/* <AccountCircleIcon sx={{ mr: 1 }} /> */}
           </Box>
-          <Link href="/basket">
-            <ShoppingBasketIcon />
-          </Link>
+          <Button sx={{ color: 'black' }}>
+            <Link href="/basket">
+              <ShoppingBasketIcon sx={{ color: "#454545", fontSize: "2rem" }} />
+            </Link>
+          </Button>
         </Box>
       ) : (
         <Link href="/register">
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography sx={{ ml: 1 }}>ورود</Typography>
-            <LoginIcon />
+            <LoginIcon sx={{ color: "#454545" }} />
           </Box>
         </Link>
       )}

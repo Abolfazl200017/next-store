@@ -1,4 +1,5 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
+import { Link } from "react-transition-progress/next";
 
 export const CannotGetData = ({ message='مشکلی در دریافت اطلاعات پیش آمده لطفا مجددا تلاش نمایید' } : { message?: string }) => {
   return (
@@ -14,6 +15,11 @@ export const CannotGetData = ({ message='مشکلی در دریافت اطلاع
         <Typography sx={{ fontSize: "1.5rem", mt: -12 }}>
           { message }
         </Typography>
+        <Button size='large'>
+          <Link href='/'>
+            بازگشت به خانه
+          </Link>
+        </Button>
       </Box>
     </Container>
   );

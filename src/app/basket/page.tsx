@@ -114,7 +114,7 @@ export default function BasketPage() {
         <Container
           maxWidth="sm"
           sx={{
-            minHeight: "calc(100vh - 100px)",
+            minHeight: "calc(100vh - 120px)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -170,8 +170,8 @@ export default function BasketPage() {
             </Box>
             <Box>
               <Link href="/basket/checkout">
-                <Button variant="outlined" sx={{ borderRadius: 5 }}>
-                  تکمیل خرید
+                <Button variant="outlined" size="large" sx={{ borderRadius: 5 }}>
+                  ادامه خرید
                 </Button>
               </Link>
             </Box>

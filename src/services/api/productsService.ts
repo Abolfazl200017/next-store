@@ -15,6 +15,17 @@ export const productsService = {
       return { products: null, error };
     }
   },
+  getProductsInCategory: async (category: string) => {
+    try {
+      const response: AxiosResponse<Product[]> = await axiosInstance.get(
+        `${API_ENDPOINTS.PRODUCTS.BASE}/category/${category}`
+      );
+      return { products: response.data, error: null };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return { products: null, error };
+    }
+  },
   getSingleProduct: async (id:number | string) => {
     try {
       const response: AxiosResponse<Product> = await axiosInstance.get(

@@ -4,19 +4,23 @@ import { Link } from "react-transition-progress/next";;
 type CategoriesImage = {
   name: string;
   img: string;
+  url: string;
 };
 const categoriesImage: CategoriesImage[] = [
   {
     name: "لوازم الکترونیکی",
     img: "/images/categories/electronics.jpg",
+    url: 'electronics',
   },
   {
     name: "جواهرات",
     img: "/images/categories/jewelery.jpg",
+    url: 'jewelery',
   },
   {
     name: "پوشاک مردانه",
     img: "images/categories/men's clothing.jpg",
+    url: "men's clothing"
   },
 ];
 
@@ -47,7 +51,7 @@ const Categories = () => {
       <Grid container spacing={2} sx={{ marginTop: 8 }}>
         {categoriesImage.map((category) => (
           <Grid key={category.name} size={4}>
-            <Link href={"/" + category.name}>
+            <Link href={"/product?category=" + category.url}>
               <Box
                 sx={{
                   width: 1,

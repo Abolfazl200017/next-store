@@ -7,22 +7,29 @@ import LayoutContainer from "@/components/layout";
 import { CannotGetData } from "@/components/common/errors/CannotGetData";
 import ProductCard from "@/components/Home/ProductCard";
 
+export const categories = [
+  "electronics",
+  "jewelery",
+  "men's clothing",
+  "women's clothing",
+];
+
 export default async function Products({
   searchParams,
-  params,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  params: { slug: string };
 }) {
   const searchParamsValue = await searchParams;
-  const category = searchParamsValue['category']
-  console.log(category)
-  console.log('slug', params.slug)
+  const category = searchParamsValue["category"];
+  console.log(category);
   const page = Number(searchParamsValue["page"]) || 1;
   const perPage = 12;
 
   const { products }: { products: Product[] | null } =
-    await productsService.getAllProducts();
+    typeof category == "string" &&
+    categories.findIndex((c) => c === category) > -1
+      ? await productsService.getProductsInCategory(category)
+      : await productsService.getAllProducts();
 
   const cookieStore = await cookies();
   const token = cookieStore.get("authToken");

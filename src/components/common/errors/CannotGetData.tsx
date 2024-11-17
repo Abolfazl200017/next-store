@@ -1,19 +1,20 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
-export const CannotGetData = () => {
+export const CannotGetData = ({ message='مشکلی در دریافت اطلاعات پیش آمده لطفا مجددا تلاش نمایید' } : { message?: string }) => {
   return (
-    <Box
-      sx={{
-        width: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Box component="img" src="/images/no-data.svg" />
-      <Typography sx={{ fontSize: "1.5rem" }}>
-        مشکلی در دریافت اطلاعات پیش آمده لطفا مجددا تلاش نمایید
-      </Typography>
-    </Box>
+    <Container maxWidth='lg'>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Box component="img" src="/images/no-data.svg" />
+        <Typography sx={{ fontSize: "1.5rem", mt: -12 }}>
+          { message }
+        </Typography>
+      </Box>
+    </Container>
   );
 };

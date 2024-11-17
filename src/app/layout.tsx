@@ -49,7 +49,7 @@ export default function RootLayout({
         <ThemeRegistry locale="fa">
           <ProgressBarProvider>
             <ProgressBar className="sdfsaf" />
-            {children}s
+            {children}
           </ProgressBarProvider>
         </ThemeRegistry>
       </body>

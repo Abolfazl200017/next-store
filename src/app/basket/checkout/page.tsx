@@ -116,15 +116,16 @@ const CheckoutPage = () => {
       selectedOption ? citiesByProvince[selectedOption.value] || [] : []
     );
     setValue("city", null); // Reset city when province changes
-    trigger("province")
+    trigger("province");
   };
 
   const handleCityChange = (selectedOption: City | null) => {
     setValue("city", selectedOption);
-    trigger("city")
+    trigger("city");
   };
 
-  const onSubmit = (data: unknown) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (data: any) => {
     console.log(data);
     reset();
     showSnackbar("خرید شما با موفقیت ثبت شد", "success");
@@ -258,6 +259,21 @@ const CheckoutPage = () => {
         />
 
         <Controller
+          name="postcode"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="کد پستی"
+              fullWidth
+              error={!!errors.postcode}
+              helperText={errors.postcode ? errors.postcode.message : ""}
+              sx={{ mb: 3 }}
+            />
+          )}
+        />
+
+        <Controller
           name="address"
           control={control}
           render={({ field }) => (
@@ -274,7 +290,13 @@ const CheckoutPage = () => {
           )}
         />
 
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          size="large"
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ width: 1 }}
+        >
           ثبت سفارش
         </Button>
       </form>

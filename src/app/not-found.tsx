@@ -1,5 +1,5 @@
 import { Box, Button, Container, Typography } from '@mui/material'
-import Link from 'next/link'
+import { Link } from "react-transition-progress/next";
  
 export default function NotFound() {
   return (

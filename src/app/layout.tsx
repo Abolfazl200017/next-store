@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { siteConfig } from "@/constants";
 import ThemeRegistry from "@/providers/ThemeRegistry";
+import { ProgressBar, ProgressBarProvider } from "react-transition-progress";
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -46,7 +47,10 @@ export default function RootLayout({
       </head>
       <body className={shabnamFont.className}>
         <ThemeRegistry locale="fa">
-          {children}
+          <ProgressBarProvider>
+            <ProgressBar className="sdfsaf" />
+            {children}s
+          </ProgressBarProvider>
         </ThemeRegistry>
       </body>
     </html>

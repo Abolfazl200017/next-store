@@ -10,7 +10,7 @@ import {
 import useBasketStore from "@/store/basketStore";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import ProductActionsContainer from "@/components/common/ProductActions.tsx";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";;
 
 export default function BasketPage() {
   const { products } = useBasketStore();

@@ -1,7 +1,7 @@
 import { siteConfig } from "@/constants";
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";;
 import LoginIcon from "@mui/icons-material/Login";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 

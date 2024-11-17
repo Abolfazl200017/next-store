@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider, createTheme } from '@mui/material';
 import BasketPage from './page';
 import useBasketStore from '@/store/basketStore';
 import ThemeRegistry from '@/providers/ThemeRegistry';
@@ -22,6 +21,7 @@ jest.mock('next/link', () => {
 
 // Mock ProductActionsContainer since it's a separate component
 jest.mock('@/components/common/ProductActions.tsx', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function MockProductActions({ product }: { product: any, isVertical: boolean }) {
     return <div data-testid="product-actions">{product.id}</div>;
   };

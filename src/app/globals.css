@@ -55,3 +55,12 @@ a {
 .bg-ligtSecondary {
   background-color: #fcf8f3;
 }
+
+.sdfsaf {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #edb739e0;
+  height: 3px;
+  transition: all;
+}

@@ -3,10 +3,9 @@ import {
   CardActions,
   CardContent,
   CardMedia,
-  Button,
   Typography,
 } from "@mui/material";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import { Product } from "@/services/api/types";
 import ProductActionsContainer from "../common/ProductActions.tsx";
 

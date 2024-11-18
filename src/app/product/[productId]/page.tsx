@@ -17,7 +17,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const token = cookieStore.get("authToken");
 
   if (!product) {
-    return <CannotGetData />;
+    return <CannotGetData message="محصول مورد نظر یافت نشد" />;
   }
 
   return (

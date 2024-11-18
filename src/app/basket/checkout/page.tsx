@@ -9,12 +9,13 @@ import {
   FormControl,
   Autocomplete,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useBasketStore from "@/store/basketStore";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import MapComponent from "./Map";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -47,6 +48,7 @@ const validationSchema = Yup.object({
 });
 
 const CheckoutPage = () => {
+  const router = useRouter();
   const [selectedProvince, setSelectedProvince] = useState<Province | null>(
     null
   );
@@ -54,12 +56,36 @@ const CheckoutPage = () => {
   const { reset } = useBasketStore();
   const { showSnackbar } = useSnackbar();
   const [hydrated, setHydrated] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [{isSuccess, isLoading}, setStates] = useState({isSuccess: false, isLoading: true})
   const handleMap = (data: any) => {
     setValue("address", data.address);
-    trigger("address"); // Trigger validation for the updated field
+    trigger("address");
   };
-  
+
+  useEffect(() => {
+    const basketData = localStorage.getItem('local-storage');
+    if (basketData) {
+      try {
+        const basket = JSON.parse(basketData);
+        const hasProducts = basket?.state?.products?.length > 0;
+
+        if (!hasProducts) {
+          router.push('/basket');
+        }
+        else {
+          setStates({
+            isSuccess,
+            isLoading: false,
+          })
+        }
+      } catch (error) {
+        console.error('Error parsing local storage data:', error);
+        router.push('/basket');
+      }
+    } else {
+      router.push('/basket');
+    }
+  }, [router]);
 
   // Example provinces and cities
   const provinces: Province[] = [
@@ -134,11 +160,27 @@ const CheckoutPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (data: any) => {
     console.log(data);
-    setIsSuccess(true)
+    setStates({isLoading, isSuccess: true})
     reset();
     showSnackbar("خرید شما با موفقیت ثبت شد", "success");
     redirect("/");
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          width: 1,
+          height: "85vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    )
+  }
 
   if (isSuccess)
     return (

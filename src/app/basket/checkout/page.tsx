@@ -17,6 +17,7 @@ import useBasketStore from "@/store/basketStore";
 import { redirect } from "next/navigation";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import MapComponent from "./Map";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 type Province = { value: string; label: string };
 type City = { value: string; label: string };
@@ -53,6 +54,7 @@ const CheckoutPage = () => {
   const { reset } = useBasketStore();
   const { showSnackbar } = useSnackbar();
   const [hydrated, setHydrated] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false)
   const handleMap = (data: any) => {
     setValue("address", data.address);
     trigger("address"); // Trigger validation for the updated field
@@ -132,11 +134,24 @@ const CheckoutPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (data: any) => {
     console.log(data);
+    setIsSuccess(true)
     reset();
     showSnackbar("خرید شما با موفقیت ثبت شد", "success");
     redirect("/");
   };
 
+  if (isSuccess)
+    return (
+      <Container maxWidth='sm' sx={{ py: 5, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <Box sx={{ p: 5, minHeight: '300px', minWidth: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', backgroundColor: '#f4f5f7', borderRadius: 5 }}>
+          <Typography variant="h4" color="success">
+            خرید شما با موفقیت ثبت شد
+          </Typography>
+          <CheckCircleIcon color="success" sx={{ fontSize: '3rem' }} />
+        </Box>
+      </Container>
+    )
+  
   return (
     <Container maxWidth="sm" sx={{ my: 3 }}>
       <Typography variant="h4" gutterBottom sx={{ pb: 2 }}>

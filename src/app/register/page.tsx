@@ -18,6 +18,7 @@ import { theme } from "@/theme/theme";
 import { authService } from "@/services/api/authService";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useSnackbar } from "@/providers/SnackbarProvider";
 
 const schema = yup.object().shape({
   username: yup.string().required("نام کاربری باید وارد شود"),
@@ -35,7 +36,8 @@ interface FormValues {
 const Register = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
+  const { showSnackbar } = useSnackbar();
+  
   const {
     handleSubmit,
     control,
@@ -50,19 +52,33 @@ const Register = () => {
     setLoading(true);
     try {
       const response = await authService.register(data);
+      console.log(response)
       const token = response.data?.token;
 
-      if (token)
+      if (token){
         Cookies.set("authToken", token, {
           expires: 7,
           secure: true,
           sameSite: "Strict",
         });
 
-      router.push("/");
-      console.log("Login success:", response.data);
+        showSnackbar("ورود با موفقیت انجام شد", "success");
+        
+        router.push("/");
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error:any = response.error
+      if (error.status === 401)
+        showSnackbar("نام کاربری یا رمز عبور صحیح نمی‌باشد", "error");
+      else if (response.error)
+        showSnackbar("مشکلی در ورود پیش آمده لطفا مجددا تلاش کنید", "error");
+
+        // console.log(response.error)
+      // console.log("Login success:", response.data);
     } catch (error) {
-      console.error("Login failed:", error);
+      console.log("Login failed:", error);
+
     } finally {
       setLoading(false);
     }

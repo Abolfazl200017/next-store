@@ -12,7 +12,7 @@ export const authService = {
       );
       return { data: response.data, error: null };
     } catch (error) {
-      console.error("Error fetching data:", error);
+      // console.log("Error fetching data:", error);
       return { data: null, error };
     }
   },

@@ -8,6 +8,7 @@ import {
   Typography,
   FormControl,
   Autocomplete,
+  Box,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
@@ -15,12 +16,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import useBasketStore from "@/store/basketStore";
 import { redirect } from "next/navigation";
 import { useSnackbar } from "@/providers/SnackbarProvider";
+import MapComponent from "./Map";
 
-// Define types for provinces and cities
 type Province = { value: string; label: string };
 type City = { value: string; label: string };
 
-// Validation schema using Yup
 const validationSchema = Yup.object({
   name: Yup.string().required("نام باید وارد شود"),
   lastname: Yup.string().required("نام خانوادگی باید وارد شود"),
@@ -53,6 +53,11 @@ const CheckoutPage = () => {
   const { reset } = useBasketStore();
   const { showSnackbar } = useSnackbar();
   const [hydrated, setHydrated] = useState(false);
+  const handleMap = (data: any) => {
+    setValue("address", data.address);
+    trigger("address"); // Trigger validation for the updated field
+  };
+  
 
   // Example provinces and cities
   const provinces: Province[] = [
@@ -289,6 +294,10 @@ const CheckoutPage = () => {
             />
           )}
         />
+
+        <Box sx={{ width: 1, aspectRatio: '4/3', overflow: 'hidden' }}>
+          <MapComponent handleMap={handleMap} />
+        </Box>
 
         <Button
           size="large"

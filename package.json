@@ -17,7 +17,6 @@
     "@mui/icons-material": "^6.1.6",
     "@mui/material": "^6.1.6",
     "@mui/styled-engine-sc": "^6.1.6",
-    "@neshan-maps-platform/mapbox-gl-react": "^1.0.2",
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.7",
     "framer-motion": "^11.11.17",

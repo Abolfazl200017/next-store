@@ -69,18 +69,21 @@ const Register = () => {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error:any = response.error
-      if (error.status === 401)
-        showSnackbar("نام کاربری یا رمز عبور صحیح نمی‌باشد", "error");
-      else if (response.error)
-        showSnackbar("مشکلی در ورود پیش آمده لطفا مجددا تلاش کنید", "error");
+      
+      if(error){
+        if (error.status === 401)
+          showSnackbar("نام کاربری یا رمز عبور صحیح نمی‌باشد", "error");
+        else
+          showSnackbar("مشکلی در ورود پیش آمده لطفا مجددا تلاش کنید", "error");
+
+        setLoading(false)
+      }
 
         // console.log(response.error)
       // console.log("Login success:", response.data);
     } catch (error) {
       console.log("Login failed:", error);
 
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -295,7 +295,7 @@ const CheckoutPage = () => {
           )}
         />
 
-        <Box sx={{ width: 1, aspectRatio: '4/3', overflow: 'hidden' }}>
+        <Box sx={{ width: 1, aspectRatio: '4/3', overflow: 'hidden', my: 3 }}>
           <MapComponent handleMap={handleMap} />
         </Box>
 

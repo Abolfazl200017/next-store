@@ -18,7 +18,7 @@ const Map = Mapir.setToken({
 const MapComponent = ({ handleMap }: { handleMap: (data: any) => void }) => {
   const [markerArray, setMarkerArray] = useState(<></>);
   const [coord, setCoord] = useState([51.42, 35.72]);
-  function reverseFunction(map, e) {
+  function reverseFunction(map: any, e: { lngLat: { lat: any; lng: any; }; }) {
     var url = `https://map.ir/reverse/no?lat=${e.lngLat.lat}&lon=${
       e.lngLat.lng
     }`;

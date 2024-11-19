@@ -101,7 +101,7 @@ const useBasketStore = create<BasketState>()((set) => ({
   reset: () => {
     // Clear localStorage and reset state
     localStorage.removeItem(STORAGE_KEY);
-    set({ products: [], loading: true });
+    set({ products: [], loading: false });
   },
 }));
 

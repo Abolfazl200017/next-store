@@ -4,6 +4,7 @@ import { Product } from "@/services/api/types";
 import useBasketStore from "@/store/basketStore";
 import ProductListActionsView from "./ProductListActionsView";
 import SingleProductActionsView from "./SingleProductActionsView";
+import { Skeleton } from "@mui/material";
   
 const ProductActionsContainer = ({
   product,
@@ -15,7 +16,7 @@ const ProductActionsContainer = ({
   isVertical?: boolean;
 }) => {
 
-  const { products, addProduct, updateProductQuantity, removeProduct } =
+  const { products, addProduct, updateProductQuantity, removeProduct, loading } =
     useBasketStore();
 
   const isProductInBasket = products.some((p) => p.id === product.id);
@@ -41,6 +42,10 @@ const ProductActionsContainer = ({
     else updateProductQuantity(product.id.toString(), quantity - 1);
   };
 
+  if ( loading )
+    return (
+        <Skeleton width="50%" height={50} sx={{ borderRadius: '10px' }} />
+    )
   
   return (
     <>

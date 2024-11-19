@@ -144,9 +144,13 @@ const CheckoutPage = () => {
   const onSubmit = (data: any) => {
     console.log(data);
     setStates({isLoading, isSuccess: true})
-    reset();
     showSnackbar("خرید شما با موفقیت ثبت شد", "success");
-    redirect("/");
+    setTimeout(() => {
+      reset()
+    }, 1000);
+    setTimeout(() => {
+      redirect("/");
+    }, 100);
   };
 
   if (isLoading) {

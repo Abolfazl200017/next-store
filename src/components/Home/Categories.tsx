@@ -19,7 +19,7 @@ const categoriesImage: CategoriesImage[] = [
   },
   {
     name: "پوشاک مردانه",
-    img: "images/categories/men's clothing.jpg",
+    img: "/images/categories/men's clothing.jpg",
     url: "men's clothing"
   },
 ];

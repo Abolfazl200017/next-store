@@ -1,7 +1,5 @@
 import { Product } from '@/services/api/types';
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import { mockProducts } from './mockData';
 
 export type ProductWithQuantity = Product & {
   quantity: number;
@@ -14,127 +12,174 @@ type BasketState = {
   updateProductQuantity: (id: string, quantity: number) => void;
   removeProduct: (id: string | number) => void;
   reset: () => void;
-  initializeStore: () => void; // Method to set up the store
+  initializeStore: () => void;
 };
 
-// Create initial state with mock data
+const STORAGE_KEY = 'basket-storage';
+
+// Helper functions for localStorage
+const getStorageData = (): ProductWithQuantity[] => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Error reading from localStorage:', error);
+    return [];
+  }
+};
+
+const setStorageData = (products: ProductWithQuantity[]) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+  } catch (error) {
+    console.error('Error writing to localStorage:', error);
+  }
+};
+
 const initialState: Pick<BasketState, 'products' | 'loading'> = {
-  products: [],
+  products: getStorageData(), // Initialize from localStorage
   loading: true,
 };
 
-const useBasketStore = create<BasketState>()(
-  devtools(
-    persist(
-      (set) => ({
-        // Initial state
-        products: initialState.products,
-        loading: initialState.loading,
+const useBasketStore = create<BasketState>()((set) => ({
+  products: initialState.products,
+  loading: initialState.loading,
 
-        // Method to initialize the store
-        initializeStore: () => {
-          set({ loading: true }); // Set loading to true initially
-          setTimeout(() => {
-            // Simulating an API or data fetch
-            set({
-              products: process.env.NODE_ENV === 'development' ? mockProducts : [],
-              loading: false, // Set loading to false after initialization
-            });
-          }, 1000); // Simulated delay
-        },
+  initializeStore: () => {
+    const storedProducts = getStorageData();
+    set({
+      products: storedProducts,
+      loading: false,
+    });
+  },
 
-        // Add a product
-        addProduct: (product, quantity) =>
-          set(
-            (state) => {
-              const existingProduct = state.products.find((p) => p.id === product.id);
-              if (existingProduct) {
-                return {
-                  products: state.products.map((p) =>
-                    p.id === product.id
-                      ? { ...p, quantity: p.quantity + quantity }
-                      : p
-                  ),
-                };
-              }
-              return { products: [...state.products, { ...product, quantity }] };
-            },
-            false,
-            'basket/addProduct'
-          ),
-
-        // Update product quantity
-        updateProductQuantity: (id, quantity) =>
-          set(
-            (state) => ({
-              products: state.products.map((product) =>
-                product.id.toString() === id ? { ...product, quantity } : product
-              ),
-            }),
-            false,
-            'basket/updateQuantity'
-          ),
-
-        // Remove a product
-        removeProduct: (id) =>
-          set(
-            (state) => ({
-              products: state.products.filter(
-                (product) => product.id.toString() !== id
-              ),
-            }),
-            false,
-            'basket/removeProduct'
-          ),
-
-        // Reset the store
-        reset: () =>
-          set(
-            { products: initialState.products, loading: false },
-            false,
-            'basket/reset'
-          ),
-      }),
-      {
-        name: 'basket-storage',
+  addProduct: (product, quantity) =>
+    set((state) => {
+      const existingProduct = state.products.find((p) => p.id === product.id);
+      let newProducts;
+      
+      if (existingProduct) {
+        newProducts = state.products.map((p) =>
+          p.id === product.id
+            ? { ...p, quantity: p.quantity + quantity }
+            : p
+        );
+      } else {
+        newProducts = [...state.products, { ...product, quantity }];
       }
-    )
-  )
-);
+      
+      // Save to localStorage
+      setStorageData(newProducts);
+      
+      return { products: newProducts };
+    }),
+
+  updateProductQuantity: (id, quantity) =>
+    set((state) => {
+      const newProducts = state.products.map((product) =>
+        product.id.toString() === id ? { ...product, quantity } : product
+      );
+      
+      // Save to localStorage
+      setStorageData(newProducts);
+      
+      return { products: newProducts };
+    }),
+
+  removeProduct: (id) =>
+    set((state) => {
+      const newProducts = state.products.filter(
+        (product) => product.id.toString() !== id.toString()
+      );
+      
+      // Save to localStorage
+      setStorageData(newProducts);
+      
+      return { products: newProducts };
+    }),
+
+  reset: () => {
+    // Clear localStorage and reset state
+    localStorage.removeItem(STORAGE_KEY);
+    set({ products: [], loading: true });
+  },
+}));
 
 export default useBasketStore;
 
+// Test store version
 export const createTestBasketStore = (customInitialState?: Partial<BasketState>) => {
+  const mockStorageKey = 'test-basket-storage';
+  
+  const getTestStorageData = (): ProductWithQuantity[] => {
+    try {
+      const data = localStorage.getItem(mockStorageKey);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error reading from test localStorage:', error);
+      return [];
+    }
+  };
+
+  const setTestStorageData = (products: ProductWithQuantity[]) => {
+    try {
+      localStorage.setItem(mockStorageKey, JSON.stringify(products));
+    } catch (error) {
+      console.error('Error writing to test localStorage:', error);
+    }
+  };
+
   return create<BasketState>()((set) => ({
-    products: customInitialState?.products || mockProducts,
-    loading: false, // Set loading to false for test stores by default
-    initializeStore: () => {},
+    products: customInitialState?.products || getTestStorageData(),
+    loading: false,
+    
+    initializeStore: () => {
+      const storedProducts = getTestStorageData();
+      set({ products: storedProducts, loading: false });
+    },
+    
     addProduct: (product, quantity) =>
       set((state) => {
         const existingProduct = state.products.find((p) => p.id === product.id);
+        let newProducts;
+        
         if (existingProduct) {
-          return {
-            products: state.products.map((p) =>
-              p.id === product.id
-                ? { ...p, quantity: p.quantity + quantity }
-                : p
-            ),
-          };
+          newProducts = state.products.map((p) =>
+            p.id === product.id
+              ? { ...p, quantity: p.quantity + quantity }
+              : p
+          );
+        } else {
+          newProducts = [...state.products, { ...product, quantity }];
         }
-        return { products: [...state.products, { ...product, quantity }] };
+        
+        setTestStorageData(newProducts);
+        return { products: newProducts };
       }),
+
     updateProductQuantity: (id, quantity) =>
-      set((state) => ({
-        products: state.products.map((product) =>
+      set((state) => {
+        const newProducts = state.products.map((product) =>
           product.id.toString() === id ? { ...product, quantity } : product
-        ),
-      })),
+        );
+        
+        setTestStorageData(newProducts);
+        return { products: newProducts };
+      }),
+
     removeProduct: (id) =>
-      set((state) => ({
-        products: state.products.filter(
-          (product) => product.id.toString() !== id
-        ),
-      })),
-    reset: () => set({ products: mockProducts }),
+      set((state) => {
+        const newProducts = state.products.filter(
+          (product) => product.id.toString() !== id.toString()
+        );
+        
+        setTestStorageData(newProducts);
+        return { products: newProducts };
+      }),
+
+    reset: () => {
+      localStorage.removeItem(mockStorageKey);
+      set({ products: [], loading: false });
+    },
   }));
 };

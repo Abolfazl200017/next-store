@@ -53,39 +53,22 @@ const CheckoutPage = () => {
     null
   );
   const [cities, setCities] = useState<City[]>([]);
-  const { reset } = useBasketStore();
+  const { reset, products } = useBasketStore();
   const { showSnackbar } = useSnackbar();
   const [hydrated, setHydrated] = useState(false);
   const [{isSuccess, isLoading}, setStates] = useState({isSuccess: false, isLoading: true})
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleMap = (data: any) => {
     setValue("address", data.address);
     trigger("address");
   };
 
   useEffect(() => {
-    const basketData = localStorage.getItem('local-storage');
-    if (basketData) {
-      try {
-        const basket = JSON.parse(basketData);
-        const hasProducts = basket?.state?.products?.length > 0;
-
-        if (!hasProducts) {
-          router.push('/basket');
-        }
-        else {
-          setStates({
-            isSuccess,
-            isLoading: false,
-          })
-        }
-      } catch (error) {
-        console.error('Error parsing local storage data:', error);
-        router.push('/basket');
-      }
-    } else {
-      router.push('/basket');
-    }
-  }, [router]);
+    if (!products || !products.length)
+      router.push('/basket')
+    else
+      setStates({isSuccess, isLoading: false})
+  }, [isSuccess, products, router])
 
   // Example provinces and cities
   const provinces: Province[] = [

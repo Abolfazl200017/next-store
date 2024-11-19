@@ -4,6 +4,7 @@ import "./globals.css";
 import { siteConfig } from "@/constants";
 import ThemeRegistry from "@/providers/ThemeRegistry";
 import { ProgressBar, ProgressBarProvider } from "react-transition-progress";
+import StoreProvider from "@/providers/StoreProvider";
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -48,8 +49,10 @@ export default function RootLayout({
       <body className={shabnamFont.className}>
         <ThemeRegistry locale="fa">
           <ProgressBarProvider>
-            <ProgressBar className="sdfsaf" />
-            {children}
+            <StoreProvider>
+              <ProgressBar className="sdfsaf" />
+              {children}
+            </StoreProvider>
           </ProgressBarProvider>
         </ThemeRegistry>
       </body>
